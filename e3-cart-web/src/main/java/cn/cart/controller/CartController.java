@@ -201,7 +201,9 @@ public class CartController {
 		return "redirect:/cart/cart";
 	}
 	
-	
+	public void Test() {
+		System.out.println("直接刪除此测试方法即可");
+	}
 	
 	
 }
