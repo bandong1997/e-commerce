@@ -3,6 +3,8 @@ package cn.dw.dao.specification;
 import cn.dw.pojo.specification.Specification;
 import cn.dw.pojo.specification.SpecificationQuery;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface SpecificationDao {
@@ -27,4 +29,7 @@ public interface SpecificationDao {
     int updateByPrimaryKeySelective(Specification record);
 
     int updateByPrimaryKey(Specification record);
+    
+    //传销查询规格下拉列表
+    public List<Map>selectOptionList();
 }

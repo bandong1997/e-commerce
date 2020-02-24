@@ -105,7 +105,7 @@
     insert into tb_specification (id, spec_name)
     values (#{id,jdbcType=BIGINT}, #{specName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="cn.dw.pojo.specification.Specification" >
+  <insert id="insertSelective" parameterType="cn.dw.pojo.specification.Specification" useGeneratedKeys="true" keyProperty="id">
     insert into tb_specification
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -166,4 +166,8 @@
     set spec_name = #{specName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+   <!-- 传销查询规格下拉列表 -->
+  <select id="selectOptionList" resultType="map">
+  	select id,spec_name as text from tb_specification
+  </select>
 </mapper>
