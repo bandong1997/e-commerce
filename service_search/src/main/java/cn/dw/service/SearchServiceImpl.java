@@ -104,7 +104,7 @@ public class SearchServiceImpl implements SearchService {
 					item.setTitle(title);
 				}
 			}
-			//循环添加数据
+			//循环添加
 			list.add(item);
 		}
 		
