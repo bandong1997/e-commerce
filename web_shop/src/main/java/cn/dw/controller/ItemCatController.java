@@ -30,9 +30,18 @@ public class ItemCatController {
 		return itemCatService.findByParentId(parentId);
 	}
 	
+	//根据分类id查询模板id
+	@RequestMapping("/findOne")
+	public ItemCat findOne(Long id) {
+		return itemCatService.getOneItem(id);
+	}
 	
-	
-	
+	//查询所有分类信息
+	@RequestMapping("/findAll")
+	public List<ItemCat> findAll(){
+		List<ItemCat> list = itemCatService.getAll();
+		return list;
+	}
 	
 	
 	

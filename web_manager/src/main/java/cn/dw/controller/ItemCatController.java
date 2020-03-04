@@ -29,8 +29,12 @@ public class ItemCatController {
 	public List<ItemCat> findByParentId(Long parentId){
 		return itemCatService.findByParentId(parentId);
 	}
-	
-	
+	//查询所有分类信息
+	@RequestMapping("/findAll")
+	public List<ItemCat> findAll(){
+		List<ItemCat> list = itemCatService.getAll();
+		return list;
+	}
 	
 	
 	

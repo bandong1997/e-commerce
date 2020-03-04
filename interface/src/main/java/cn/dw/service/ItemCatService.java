@@ -12,6 +12,10 @@ import cn.dw.pojo.item.ItemCat;
 public interface ItemCatService {
 	//查询,根据父id查询分类
 	List<ItemCat> findByParentId(Long parentId);
+	//根据分类id查询模板id
+	ItemCat getOneItem(Long id);
+	//查询所有分类信息
+	List<ItemCat> getAll();
 
 	
 	

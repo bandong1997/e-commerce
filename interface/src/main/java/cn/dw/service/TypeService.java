@@ -1,5 +1,8 @@
 package cn.dw.service;
 
+import java.util.List;
+import java.util.Map;
+
 import cn.dw.pojo.entity.PageResult;
 import cn.dw.pojo.template.TypeTemplate;
 
@@ -19,5 +22,7 @@ public interface TypeService {
 	void updateTypetemlate(TypeTemplate template);
 	//批删
 	void del(Long[] ids);
+	//根据模板ID获得规格的列表的数据：
+	List<Map> findBySpecList(Long id);
 
 }
