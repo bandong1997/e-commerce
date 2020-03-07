@@ -1,7 +1,11 @@
 package com.dw.solrutil;
 
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -42,9 +46,23 @@ public class DataImportToSolr {
 			//如果查询不为空的话存储数据
 			for (Item item : list) {
 				//存储规格数据
-				String spec = item.getSpec();//等到一个string的json字符串
-				Map map = JSON.parseObject(spec, Map.class); //将json字符串转换成map类型
+				String spec = item.getSpec();//得到一个string的json字符串
+				Map<String,String> map = JSON.parseObject(spec, Map.class); //将json字符串转换成map类型
+				
+				/*Map<String,String> newMap = new HashMap();
+				Iterator it = map.keySet().iterator();
+				while(it.hasNext()) {
+					String key = (String) it.next();
+					try {
+						newMap.put(URLEncoder.encode(key,"UTF-8"),map.get(key));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}*/
+				
+				System.out.println(map);
 				item.setSpecMap(map);
+				//item.setSpecMap(newMap);
 			}
 			//保存
 			solrTemplate.saveBeans(list);

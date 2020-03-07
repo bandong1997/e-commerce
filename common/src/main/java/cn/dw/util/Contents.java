@@ -7,4 +7,10 @@ package cn.dw.util;
 public interface Contents {
 	//设置redis中key键
 	public final static String CONTENT_LIST_REDIS="contentList";
+	//分类名称为key 
+	public final static String CATEGORY_LIST_REDIS="categoryList";
+	//品牌缓存数据库的key
+	public final static String BRAND_LIST_REDIS="brandList";
+	//规格缓存数据库的key
+	public final static String SPEC_LIST_REDIS="specList";
 }

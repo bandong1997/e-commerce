@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.dubbo.config.annotation.Service;
@@ -19,6 +20,7 @@ import cn.dw.pojo.specification.SpecificationOptionQuery;
 import cn.dw.pojo.template.TypeTemplate;
 import cn.dw.pojo.template.TypeTemplateQuery;
 import cn.dw.pojo.template.TypeTemplateQuery.Criteria;
+import cn.dw.util.Contents;
 
 /**
  * 	模板管理service层接口实现类
@@ -33,10 +35,27 @@ public class TypeServiceImpl implements TypeService {
 	private TypeTemplateDao templateDao;
 	@Autowired
 	private SpecificationOptionDao specificationOptionDao;
-
+	@Autowired
+	private RedisTemplate redisTemplate;
+	
 	//分页条件查询
 	@Override
 	public PageResult searchTypeTemplate(TypeTemplate typeTemplate, Integer page, Integer rows) {
+		/** redis缓存模板所有数据*/
+		List<TypeTemplate> templateAll = templateDao.selectByExample(null);
+		for (TypeTemplate typeTemplate2 : templateAll) {
+			//模板id作为key,品牌集合作为value缓存Redis中  获取品牌集合
+			String brandIdsJSON = typeTemplate2.getBrandIds();
+			//拿到的品牌集合是个json串，要转换
+			List<Map> brandList = JSON.parseArray(brandIdsJSON,Map.class);
+			redisTemplate.boundHashOps(Contents.BRAND_LIST_REDIS).put(typeTemplate2.getId(), brandList);
+			
+			//模板id作为key,规格集合作为value缓存Redis中 :根据模板ID获得规格的列表的数据：
+			List<Map> specList = findBySpecList(typeTemplate2.getId());
+			redisTemplate.boundHashOps(Contents.SPEC_LIST_REDIS).put(typeTemplate2.getId(), specList);
+		}
+		
+		
 		PageHelper.startPage(page, rows);
 		TypeTemplateQuery example = new TypeTemplateQuery();
 		Criteria criteria = example.createCriteria();
