@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.Criteria;
@@ -78,6 +79,11 @@ public class SearchServiceImpl implements SearchService {
 
 		//获取关键字
 		String  keywords = String.valueOf(searchMap.get("keywords"));
+		//去空格
+		if(keywords != null) {
+			keywords = keywords.replace(" ", "");//将空格替换空的字符串 来实现多关键字搜索
+		}
+		
 		//获取当前页
 		Integer pageNo = Integer.parseInt(String.valueOf(searchMap.get("pageNo")));
 		//获取每页查多少
@@ -94,6 +100,11 @@ public class SearchServiceImpl implements SearchService {
 		/**获取页面点击的价格过滤条件*/
 		String price = String.valueOf(searchMap.get("price"));
 		
+		/**排序*/
+		// 1.获取页面传入的排序的域
+		String sortField = String.valueOf(searchMap.get("sortField"));
+		// 2.获取页面传入的排序方式
+		String sortType = String.valueOf(searchMap.get("sort"));
 		
 		//创建查询对象
 		//Query query = new SimpleQuery();
@@ -199,6 +210,26 @@ public class SearchServiceImpl implements SearchService {
 				}
 			}
 		}
+		/**排序*/
+		//添加排序条件
+		if(sortField != null && sortType !=null && !"".equals(sortField) && !"".equals(sortType)) {
+			// 升序排序
+			if("ASC".equals(sortType)) {
+				// 创建排序对象
+				Sort sort = new Sort(Sort.Direction.ASC, "item_"+sortField);
+				//将排序对象放入查询对象中
+				query.addSort(sort);
+			}
+			// 降序排序
+			if("DESC".equals(sortType)) {
+				// 创建排序对象
+				Sort sort = new Sort(Sort.Direction.DESC, "item_"+sortField);
+				//将排序对象放入查询对象中
+				query.addSort(sort);
+			}
+		}
+		
+		
 		
 		//普通查询数据
 		//ScoredPage<Item> items = solrTemplate.queryForPage(query, Item.class);
@@ -243,6 +274,11 @@ public class SearchServiceImpl implements SearchService {
 		
 		//获取关键字
 		String  keywords = String.valueOf(searchMap.get("keywords"));
+		//去空格
+		if(keywords != null) {
+			keywords = keywords.replace(" ", "");//将空格替换空的字符串 来实现多关键字搜索
+		}
+		
 		//创建查询对象
 		Query query = new SimpleQuery();
 		//设置查询条件

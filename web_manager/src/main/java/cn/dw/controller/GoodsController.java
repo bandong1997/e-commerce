@@ -1,6 +1,7 @@
 package cn.dw.controller;
 
 
+import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import cn.dw.pojo.entity.PageResult;
 import cn.dw.pojo.entity.Result;
 import cn.dw.pojo.good.Goods;
 import cn.dw.service.GoodsService;
+import cn.dw.service.SolrManagerService;
 
 /**
  *  添加商品
@@ -27,6 +29,9 @@ public class GoodsController {
 	@Reference
 	private GoodsService goodsService;
 	
+	//远程注入商品上下架根据商品id获取库存数据的service层接口
+	@Reference
+	private SolrManagerService solrManagerService;
 	
 	//添加商品
 	@RequestMapping("/add")
@@ -76,7 +81,14 @@ public class GoodsController {
 	@RequestMapping("/delete")
 	public Result delete(Long[] ids) {
 		try {
-			goodsService.del(ids);
+			if(ids != null) {
+				for (Long id : ids) {
+					//1.根据商品id到数据库中删除
+					goodsService.del(id);
+					//2.根据商品id到solr索引库中删除对用的数据
+					solrManagerService.delItemToSolr(id);
+				}
+			}
 			return new Result(true, "修改成功");
 		} catch (Exception e) {
 			return new Result(false, "修改失败");
@@ -86,7 +98,16 @@ public class GoodsController {
 	@RequestMapping("/updateStatus")
 	public Result updateStatus(Long[] ids,String status) {
 		try {
-			goodsService.updateStayus(ids,status);
+			if(ids != null) {
+				for (Long id : ids) {
+					//商品上架第一步：到数据库中根据商品id改变商品的上架状态
+					goodsService.updateStayus(id,status);
+					//第二步：对于审核通过的商品，根据商品id获取库存数据，放入到solr中
+					if("1".equals(status)) {
+						solrManagerService.saveItemSolr(id);
+					}
+				}
+			}
 			return new Result(true, "审核成功");
 		} catch (Exception e) {
 			return new Result(false, "审核失败");

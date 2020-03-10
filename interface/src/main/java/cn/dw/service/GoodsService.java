@@ -19,8 +19,8 @@ public interface GoodsService {
 	//修改商品
 	void updateGoodsEntity(GoodsEntity goodsEntity);
 	//批删
-	void del(Long[] ids);
+	void del(Long id);
 	//审核商品
-	void updateStayus(Long[] ids, String status);
+	void updateStayus(Long id, String status);
 
 }

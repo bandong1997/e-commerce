@@ -217,35 +217,27 @@ public class GoodsServiceImpl implements GoodsService {
 	}
 	//批删
 	@Override
-	public void del(Long[] ids) {
-		if(ids != null) {
-			for (Long id : ids) {
-				Goods goods = new Goods();
-				goods.setId(id);
-				goods.setIsDelete("1");//1逻辑删除 0正常】
-				goodsDao.updateByPrimaryKeySelective(goods);
-			}
-		}
+	public void del(Long id) {
+		Goods goods = new Goods();
+		goods.setId(id);
+		goods.setIsDelete("1");//1逻辑删除 0正常】
+		goodsDao.updateByPrimaryKeySelective(goods);
 	}
 	//审核商品
 	@Override
-	public void updateStayus(Long[] ids, String status) {
-		if(ids != null) {
-			for (Long id : ids) {
-				// 1、根据商品id修改商品状态
-				Goods goods = new Goods();
-				goods.setId(id);
-				goods.setAuditStatus(status);
-				goodsDao.updateByPrimaryKeySelective(goods);
-				// 2、根据商品id修改库存状态
-				Item item = new Item();
-				item.setStatus(status);
-				ItemQuery example = new ItemQuery();
-				cn.dw.pojo.item.ItemQuery.Criteria criteria = example.createCriteria();
-				criteria.andGoodsIdEqualTo(id);
-				itemDao.updateByExampleSelective(item, example);
-			}
-		}
+	public void updateStayus(Long id, String status) {
+		// 1、根据商品id修改商品状态
+		Goods goods = new Goods();
+		goods.setId(id);
+		goods.setAuditStatus(status);
+		goodsDao.updateByPrimaryKeySelective(goods);
+		// 2、根据商品id修改库存状态
+		Item item = new Item();
+		item.setStatus(status);
+		ItemQuery example = new ItemQuery();
+		cn.dw.pojo.item.ItemQuery.Criteria criteria = example.createCriteria();
+		criteria.andGoodsIdEqualTo(id);
+		itemDao.updateByExampleSelective(item, example);
 	}
 	
 	
