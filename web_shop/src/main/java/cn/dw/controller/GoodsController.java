@@ -83,7 +83,7 @@ public class GoodsController {
 					//1.根据商品id到数据库中删除
 					goodsService.del(id);
 					//2.根据商品id到solr索引库中删除对用的数据
-					solrManagerService.delItemToSolr(id);
+					//solrManagerService.delItemToSolr(id);
 				}
 			}
 			return new Result(true, "修改成功");

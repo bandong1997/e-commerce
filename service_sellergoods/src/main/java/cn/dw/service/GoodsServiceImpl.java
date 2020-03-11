@@ -6,7 +6,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
+import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.command.ActiveMQTopic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.dubbo.config.annotation.Service;
@@ -60,6 +69,12 @@ public class GoodsServiceImpl implements GoodsService {
 	@Autowired
 	private SellerDao sellerDao;
 	
+	@Autowired
+	private JmsTemplate jmsTemplate; 
+	@Autowired
+	private ActiveMQTopic topicPageAndSolrDestination;//这是商品上架队列对象 广播形式
+	@Autowired
+	private ActiveMQQueue queueSolrDeleteDestination;//这是商品下架队列对象点对点
 	
 	//添加商品
 	@Override
@@ -222,10 +237,22 @@ public class GoodsServiceImpl implements GoodsService {
 		goods.setId(id);
 		goods.setIsDelete("1");//1逻辑删除 0正常】
 		goodsDao.updateByPrimaryKeySelective(goods);
+		
+		/**商品下架的id发送给消息服务器  参数1:目标对象，参数2：发送的消息是什么*/
+		jmsTemplate.send(queueSolrDeleteDestination, new MessageCreator() {
+			@Override
+			public Message createMessage(Session session) throws JMSException {
+				TextMessage textMessage = session.createTextMessage(String.valueOf(id));
+				return textMessage;
+			}
+		});
+		
 	}
 	//审核商品
 	@Override
 	public void updateStayus(Long id, String status) {
+		
+		/**根据商品id到数据库中修改商品的状态 */
 		// 1、根据商品id修改商品状态
 		Goods goods = new Goods();
 		goods.setId(id);
@@ -238,6 +265,19 @@ public class GoodsServiceImpl implements GoodsService {
 		cn.dw.pojo.item.ItemQuery.Criteria criteria = example.createCriteria();
 		criteria.andGoodsIdEqualTo(id);
 		itemDao.updateByExampleSelective(item, example);
+		
+		/**将商品id作为消息发送给消息服务器*/
+		if("1".equals(status)) {
+			jmsTemplate.send(topicPageAndSolrDestination, new MessageCreator() {
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					//创建一个文本对象
+					TextMessage textMessage = session.createTextMessage(String.valueOf(id));
+					return textMessage;
+				}
+			});
+		}
+		
 	}
 	
 	

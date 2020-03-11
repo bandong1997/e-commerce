@@ -31,7 +31,7 @@ public class SolrManagerServiceImpl implements SolrManagerService {
 	@Autowired
 	private SolrTemplate solrTemplate;
 	
-	//审核通过的商品，根据商品id获取库存数据，放入到solr中
+	//审核通过的商品，根据商品id获取库存数据，放入到solr索引库中
 	@Override
 	public void saveItemSolr(Long id) {
 		//查询item表数据
