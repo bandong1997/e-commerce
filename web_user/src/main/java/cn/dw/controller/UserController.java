@@ -68,7 +68,9 @@ public class UserController {
 	}
 	
 	
-	
+	public void testGit() {
+		System.out.println("删除");
+	}
 	
 	
 	
