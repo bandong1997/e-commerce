@@ -116,6 +116,8 @@ public class GoodsServiceImpl implements GoodsService {
 		// 卖家名称
 		Seller seller = sellerDao.selectByPrimaryKey(goodsEntity.getGoods().getSellerId());
 		item.setSeller(seller.getName());
+		// 卖家id
+		item.setSellerId(goodsEntity.getGoods().getSellerId());
 		// 示例图片
 		String images = goodsEntity.getGoodsDesc().getItemImages();
 		//格式转换

@@ -13,4 +13,8 @@ public interface Contents {
 	public final static String BRAND_LIST_REDIS="brandList";
 	//规格缓存数据库的key
 	public final static String SPEC_LIST_REDIS="specList";
+	//存在cookie里面的key
+	public final static String CART_LIST_COOKIE="pyg_cartList";
+	//存在redis里面的key
+	public final static String CART_LIST_REDIS="pyg_cartList";
 }
